@@ -1,0 +1,29 @@
+# Ignore the binary output
+cmd/app/app
+
+# Ignore the vendor directory
+vendor/
+
+# Ignore the Go build cache
+*.cache
+
+# Ignore the Go test binaries
+*.test
+
+# Ignore the Go module download cache
+pkg/mod
+
+# Ignore the Go build output
+bin/
+
+# Ignore the Docker build output
+*.docker
+
+# Ignore the IDE specific files
+.idea/
+.vscode/
+*.iml
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
