@@ -22,6 +22,7 @@ clean:
 	go clean
 	rm -f swagger.json
 	rm -f cmd/app/app
+	rm *.tar.gz
 
 # Test the project
 test:
@@ -33,6 +34,24 @@ deps:
 
 swagger:
 	swagger generate spec -o ./swagger.json --scan-models --spec=3.0 --input cmd/app/main.go
+
+# Download and unpack swagger-ui
+download-swagger-ui:
+	@if [ -f "swagger-ui.tar.gz" ]; then \
+		rm swagger-ui.tar.gz; \
+	fi
+	@if [ ! -d "./swagger-ui" ]; then \
+		curl -s https://api.github.com/repos/swagger-api/swagger-ui/releases/latest \
+		| grep "tarball_url" \
+		| cut -d '"' -f 4 \
+		| xargs curl -L -o swagger-ui.tar.gz; \
+		mkdir -p swagger-ui-temp; \
+		tar -xzf swagger-ui.tar.gz --strip-components=1 -C ./swagger-ui-temp; \
+		mkdir -p swagger-ui; \
+		cp -r ./swagger-ui-temp/dist/* ./swagger-ui/; \
+		rm -rf ./swagger-ui-temp; \
+		rm swagger-ui.tar.gz; \
+	fi
 
 # Build Docker image
 docker-build: swagger

@@ -1,32 +1,30 @@
-# First stage: Build the Go application
-FROM golang:1.23-alpine AS builder
+# Looking for information on environment variables?
+# We don't declare them here — take a look at our docs.
+# https://github.com/swagger-api/swagger-ui/blob/master/docs/usage/configuration.md
 
-# Set the working directory inside the container
-WORKDIR /app
+FROM nginx:1.26.0-alpine
 
-# Copy go.mod and go.sum files to the working directory
-COPY go.mod ./
+RUN apk update && apk add --no-cache "nodejs>=18.20.1-r0 "
 
-# Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
-RUN go mod download
+LABEL maintainer="char0n"
 
-# Copy the source code to the working directory
-COPY . .
+ENV API_KEY="**None**" \
+    SWAGGER_JSON="/app/swagger.json" \
+    PORT="8080" \
+    PORT_IPV6="" \
+    BASE_URL="/" \
+    SWAGGER_JSON_URL="" \
+    CORS="true" \
+    EMBEDDING="false"
 
-# Build the Go application
-RUN go build -o cmd/app/app ./cmd/app
+COPY --chown=nginx:nginx --chmod=0666 ./docker/default.conf.template ./docker/cors.conf ./docker/embedding.conf /etc/nginx/templates/
 
-# Second stage: Create a minimal image to run the application
-FROM alpine:latest
+COPY --chmod=0666 ./dist/* /usr/share/nginx/html/
+COPY --chmod=0555 ./docker/docker-entrypoint.d/ /docker-entrypoint.d/
+COPY --chmod=0666 ./docker/configurator /usr/share/nginx/configurator
 
-# Set the working directory inside the container
-WORKDIR /app
+# Simulates running NGINX as a non root; in future we want to use nginxinc/nginx-unprivileged.
+# In future we will have separate unpriviledged images tagged as v5.1.2-unprivileged.
+RUN chmod 777 /usr/share/nginx/html/ /etc/nginx/conf.d/ /etc/nginx/conf.d/default.conf /var/cache/nginx/ /var/run/
 
-# Copy the built Go application from the builder stage
-COPY --from=builder /app/cmd/app/app .
-
-# Expose the port the application runs on
 EXPOSE 8080
-
-# Command to run the executable
-CMD ["./app"]
