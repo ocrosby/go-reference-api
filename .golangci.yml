@@ -1,0 +1,46 @@
+run:
+  # Timeout for the whole linter run.
+  timeout: 5m
+  # List of dirs or files to include:
+  include:
+    - "cmd/"
+    - "pkg/"
+    - "internal/"
+  # List of dirs or files to exclude from linting:
+  exclude:
+    - "vendor/"
+    - "generated/"
+
+linters:
+  enable:
+    - govet
+    - gofmt
+    - errcheck
+    - gosimple
+    - staticcheck
+    - unused
+  disable:
+    - revive
+    - gochecknoglobals
+
+linters-settings:
+  gofmt:
+    # Run 'gofmt -s' to use the simplified version of code.
+    simplify: true
+
+  errcheck:
+    # Report about not checking the errors of the following functions.
+    excludedFuncs:
+      - fmt.Println
+      - fmt.Printf
+
+issues:
+  exclude-rules:
+    - path: ".*_test.go"
+      linters:
+        - golint
+    - linters:
+        - dupl
+      text: "is duplicated"
+  max-issues-per-linter: 50
+  max-same-issues: 3
