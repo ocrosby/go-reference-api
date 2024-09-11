@@ -30,3 +30,8 @@ jobs:
       - name: Lint code
         run: |          
           make lint
+
+      - name: Generate Swagger
+        run: |
+          make swagger
+          

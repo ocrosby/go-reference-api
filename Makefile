@@ -37,7 +37,7 @@ deps:
 	go get -u ./...
 
 swagger:
-	swagger generate spec -o ./swagger.json --scan-models --spec=3.0 --input cmd/app/main.go
+	swagger generate spec -o ./swagger.json --scan-models --include="cmd/app/main.go"
 
 # Download and unpack swagger-ui
 download-swagger-ui:

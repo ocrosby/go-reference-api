@@ -1,30 +1,26 @@
-# Looking for information on environment variables?
-# We don't declare them here — take a look at our docs.
-# https://github.com/swagger-api/swagger-ui/blob/master/docs/usage/configuration.md
+# First stage: build the Go application
+FROM golang:1.20-alpine AS builder
 
-FROM nginx:1.26.0-alpine
+# Set the working directory inside the container
+WORKDIR /app
 
-RUN apk update && apk add --no-cache "nodejs>=18.20.1-r0 "
+# Copy the Go modules manifests
+COPY go.mod go.sum ./
 
-LABEL maintainer="char0n"
+# Download the Go module dependencies
+RUN go mod download
 
-ENV API_KEY="**None**" \
-    SWAGGER_JSON="/app/swagger.json" \
-    PORT="8080" \
-    PORT_IPV6="" \
-    BASE_URL="/" \
-    SWAGGER_JSON_URL="" \
-    CORS="true" \
-    EMBEDDING="false"
+# Copy the source code
+COPY . .
 
-COPY --chown=nginx:nginx --chmod=0666 ./docker/default.conf.template ./docker/cors.conf ./docker/embedding.conf /etc/nginx/templates/
+# Build the Go application
+RUN go build -o /app/bin/app
 
-COPY --chmod=0666 ./dist/* /usr/share/nginx/html/
-COPY --chmod=0555 ./docker/docker-entrypoint.d/ /docker-entrypoint.d/
-COPY --chmod=0666 ./docker/configurator /usr/share/nginx/configurator
+# Second stage: use a minimal base image
+FROM scratch
 
-# Simulates running NGINX as a non root; in future we want to use nginxinc/nginx-unprivileged.
-# In future we will have separate unpriviledged images tagged as v5.1.2-unprivileged.
-RUN chmod 777 /usr/share/nginx/html/ /etc/nginx/conf.d/ /etc/nginx/conf.d/default.conf /var/cache/nginx/ /var/run/
+# Copy the built Go binary from the builder stage
+COPY --from=builder /app/bin/app /app/bin/app
 
-EXPOSE 8080
+# Set the entrypoint to the Go binary
+ENTRYPOINT ["/app/bin/app"]
