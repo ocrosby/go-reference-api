@@ -2,8 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/ocrosby/go-reference-api/internal/handlers"
-	"github.com/ocrosby/go-reference-api/internal/health"
+	"github.com/ocrosby/go-reference-api/internal"
 	"net/http"
 )
 
@@ -18,23 +17,10 @@ import (
 // @contact.email omar.crosby@gmail.com
 
 func main() {
-	mux := http.NewServeMux()
-
-	// Register handlers
-	mux.HandleFunc("GET /get", handlers.GetHandler)
-	mux.HandleFunc("PUT /put", handlers.PutHandler)
-	mux.HandleFunc("POST /post", handlers.PostHandler)
-	mux.HandleFunc("DELETE /delete", handlers.DeleteHandler)
-
-	// Register health probes
-	mux.HandleFunc("/healthz", health.LivenessProbe)
-	mux.HandleFunc("/readyz", health.ReadinessProbe)
+	mux := internal.SetupRoutes()
 
 	fmt.Println("Server listening on port 8080")
-
-	err := http.ListenAndServe(":8080", mux)
-	if err != nil {
+	if err := http.ListenAndServe(":8080", mux); err != nil {
 		panic(err)
 	}
-
 }

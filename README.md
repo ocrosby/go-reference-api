@@ -45,4 +45,16 @@ The API has the following routes:
 
 - `/` - Home route
 - `/health` - Health check route
-- 
+
+
+Sending a GET request to the /healthz route
+
+```shell
+curl -X GET http://localhost:8080/healthz
+```
+
+Sned a GET request to the /readyz route
+
+```shell
+curl -X GET http://localhost:8080/readyz
+```
