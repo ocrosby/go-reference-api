@@ -12,3 +12,37 @@ To install the API, clone the repository and run the following command:
 ```bash
 go install
 ```
+
+## Directory Structure
+
+```text
+├── cmd/
+│   └── app/
+│       └── main.go
+├── internal/
+│   ├── handlers/
+│   │   └── handlers.go
+│   └── health/
+│       └── health.go
+├── pkg/
+│   ├── adapters/
+│   │   └── database.go
+│   ├── middleware/
+│   │   └── auth.go
+│   └── mylibrary/
+│       └── mylibrary.go
+├── swagger-ui/
+│   └── (Swagger UI files)
+├── Makefile
+├── go.mod
+├── go.sum
+└── README.md
+```
+
+## Routes
+
+The API has the following routes:
+
+- `/` - Home route
+- `/health` - Health check route
+- 

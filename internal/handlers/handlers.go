@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 )
 
@@ -12,8 +13,11 @@ import (
 // @Success 200 {string} string "GET request"
 // @Router /get [get]
 func GetHandler(w http.ResponseWriter, r *http.Request) {
+
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("GET request"))
+
+	_, _ = fmt.Fprint(w, "GET request")
+	_, _ = w.Write([]byte("GET request"))
 }
 
 // PutHandler handles PUT requests
@@ -25,7 +29,7 @@ func GetHandler(w http.ResponseWriter, r *http.Request) {
 // @Router /put [put]
 func PutHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("PUT request"))
+	_, _ = w.Write([]byte("PUT request"))
 }
 
 // PostHandler handles POST requests
@@ -37,7 +41,7 @@ func PutHandler(w http.ResponseWriter, r *http.Request) {
 // @Router /post [post]
 func PostHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("POST request"))
+	_, _ = w.Write([]byte("POST request"))
 }
 
 // DeleteHandler handles DELETE requests
@@ -49,5 +53,5 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 // @Router /delete [delete]
 func DeleteHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("DELETE request"))
+	_, _ = w.Write([]byte("DELETE request"))
 }
