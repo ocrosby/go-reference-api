@@ -100,6 +100,11 @@ func TestLivenessProbeHandler(t *testing.T) {
 	if rr.Code != http.StatusOK {
 		t.Errorf("expected status %v; got %v", http.StatusOK, rr.Code)
 	}
+
+	expected := "{\"status\":\"ok\"}\n"
+	if rr.Body.String() != expected {
+		t.Errorf("expected body %v; got %v", expected, rr.Body.String())
+	}
 }
 
 func TestReadinessProbeHandler(t *testing.T) {
@@ -115,5 +120,10 @@ func TestReadinessProbeHandler(t *testing.T) {
 
 	if rr.Code != http.StatusOK {
 		t.Errorf("expected status %v; got %v", http.StatusOK, rr.Code)
+	}
+
+	expected := "{\"status\":\"ok\"}\n"
+	if rr.Body.String() != expected {
+		t.Errorf("expected body %v; got %v", expected, rr.Body.String())
 	}
 }
