@@ -10,6 +10,7 @@ install: clean
 	go mod tidy
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 	go install github.com/go-swagger/go-swagger/cmd/swagger@latest
+	go run main.go download-swagger-ui
 
 # Build the project
 build: clean
@@ -22,6 +23,7 @@ run:
 # Clean the project
 clean:
 	go clean
+	rm -rf ./swagger-ui
 	rm -f swagger.json
 	rm -f cmd/app/app
 	rm -f *.tar.gz
