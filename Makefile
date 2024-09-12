@@ -7,6 +7,7 @@
 # Install dependencies
 install: clean
 	go mod download
+	go mod tidy
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 	go install github.com/go-swagger/go-swagger/cmd/swagger@latest
 
@@ -16,7 +17,7 @@ build: clean
 
 # Run the project
 run:
-	cmd/app/app
+	go run main.go serve
 
 # Clean the project
 clean:
@@ -26,7 +27,7 @@ clean:
 	rm -f *.tar.gz
 
 lint:
-	golangci-lint --verbose run ./...
+	golangci-lint run ./...
 
 # Test the project
 test:

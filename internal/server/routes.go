@@ -1,4 +1,4 @@
-package internal
+package server
 
 import (
 	"github.com/ocrosby/go-reference-api/internal/handlers"
