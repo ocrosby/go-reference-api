@@ -74,10 +74,17 @@ func downloadSwaggerUI() {
 		return
 	}
 
+	// Check if the tarball file exists
+	if _, err := os.Stat(tarballName); err != nil {
+		fmt.Printf("Tarball file does not exist: %v\n", err)
+		return
+	}
+
 	// Extract the tarball
-	err = exec.Command("tar", "-xzf", tarballName, "--strip-components=1", "-C", tempDir).Run()
+	cmd := exec.Command("tar", "-xzf", tarballName, "--strip-components=1", "-C", tempDir)
+	output, err := cmd.CombinedOutput()
 	if err != nil {
-		fmt.Printf("Error extracting tarball: %v\n", err)
+		fmt.Printf("Error extracting tarball: %v\nOutput: %s\n", err, string(output))
 		return
 	}
 
