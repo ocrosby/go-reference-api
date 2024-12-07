@@ -2,9 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/ocrosby/go-reference-api/internal/utils"
 	"github.com/spf13/cobra"
-	"io"
-	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -29,54 +28,26 @@ func downloadSwaggerUI() {
 	const tempDir = "swagger-ui-temp"
 	const targetDir = "swagger-ui"
 
-	// Remove existing tarball if it exists
-	if _, err := os.Stat(tarballName); err == nil {
-		_ = os.Remove(tarballName)
+	if utils.FileExists(tarballName) {
+		if err := utils.DeleteFile(tarballName); err != nil {
+			fmt.Printf("Error removing existing tarball: %v\n", err)
+			return
+		}
 	}
 
-	// Create temporary directory
-	_ = os.MkdirAll(tempDir, os.ModePerm)
-
-	// Fetch the latest Swagger UI tarball URL
-	resp, err := http.Get(swaggerUIURL)
-	if err != nil {
-		fmt.Printf("Error fetching Swagger UI URL: %v\n", err)
+	if err := utils.CreateDirectory(tempDir); err != nil {
+		fmt.Printf("Error creating temporary directory: %v\n", err)
 		return
 	}
-	defer resp.Body.Close()
 
-	// Extract tarball URL from response
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Printf("Error reading response body: %v\n", err)
-		return
-	}
-	tarballURL := extractTarballURL(string(body))
-
-	// Download the tarball
-	out, err := os.Create(tarballName)
-	if err != nil {
-		fmt.Printf("Error creating tarball file: %v\n", err)
-		return
-	}
-	defer out.Close()
-
-	resp, err = http.Get(tarballURL)
-	if err != nil {
-		fmt.Printf("Error downloading tarball: %v\n", err)
-		return
-	}
-	defer resp.Body.Close()
-
-	_, err = io.Copy(out, resp.Body)
-	if err != nil {
-		fmt.Printf("Error saving tarball: %v\n", err)
+	if err := utils.DownloadFile(swaggerUIURL, tarballName); err != nil {
+		fmt.Printf("Error downloading Swagger UI: %v\n", err)
 		return
 	}
 
 	// Check if the tarball file exists
-	if _, err := os.Stat(tarballName); err != nil {
-		fmt.Printf("Tarball file does not exist: %v\n", err)
+	if !utils.FileExists(tarballName) {
+		fmt.Printf("Tarball file does not exist: %v")
 		return
 	}
 
@@ -102,6 +73,7 @@ func downloadSwaggerUI() {
 		}
 		return nil
 	})
+
 	if err != nil {
 		fmt.Printf("Error moving files: %v\n", err)
 		return

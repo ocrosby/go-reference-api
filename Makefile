@@ -23,6 +23,7 @@ run:
 # Clean the project
 clean:
 	go clean
+	rm -rf swagger-ui-temp
 	rm -rf ./swagger-ui
 	rm -f swagger.json
 	rm -f cmd/app/app
